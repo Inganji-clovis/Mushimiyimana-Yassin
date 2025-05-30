@@ -37,8 +37,23 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Something went wrong!' });
+    console.error('Error:', err);
+    console.error('Stack:', err.stack);
+    console.error('Request URL:', req.url);
+    console.error('Request Method:', req.method);
+    console.error('Request Body:', req.body);
+    
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json({ 
+            error: 'Validation error',
+            details: err.errors.map(e => e.message)
+        });
+    }
+    
+    res.status(500).json({ 
+        error: 'Server error',
+        details: err.message
+    });
 });
 
 const PORT = process.env.PORT || 5000;

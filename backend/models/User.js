@@ -37,7 +37,15 @@ const User = sequelize.define('User', {
         defaultValue: 'user'
     }
 }, {
-    timestamps: true
+    tableName: 'Users',
+    timestamps: false
 });
+
+// Sync the model with the database
+User.sync({ force: true })
+    .then(() => console.log('Users table created successfully'))
+    .catch(err => console.error('Error creating Users table:', err));
+
+module.exports = User;
 
 module.exports = User;

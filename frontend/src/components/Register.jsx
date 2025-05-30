@@ -44,11 +44,16 @@ function Register() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        if (errorData.details) {
-          setError(errorData.details.join('\n'))
-        } else {
-          setError(errorData.message || 'Registration failed')
+        let errorMessage = errorData.message || 'Registration failed'
+        
+        // Handle validation errors with details array
+        if (errorData.details && Array.isArray(errorData.details)) {
+          errorMessage = errorData.details.join('\n')
+        } else if (typeof errorData.details === 'string') {
+          errorMessage = errorData.details
         }
+        
+        setError(errorMessage)
         return
       }
 

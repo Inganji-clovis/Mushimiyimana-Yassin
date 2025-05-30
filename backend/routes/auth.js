@@ -10,6 +10,7 @@ router.post('/register', async (req, res) => {
     try {
         // Validate request body
         const { username, email, password } = req.body;
+        
         if (!username || !email || !password) {
             return res.status(400).json({ 
                 error: 'Missing required fields',
@@ -61,6 +62,14 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ 
                 error: 'Missing required fields',
                 details: ['Please provide username, email, and password']
+            });
+        }
+        
+        // Handle database connection errors
+        if (error.message.includes('connect')) {
+            return res.status(500).json({ 
+                error: 'Database connection error',
+                details: 'Please check database connection settings'
             });
         }
         
