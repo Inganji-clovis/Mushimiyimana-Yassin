@@ -58,7 +58,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Delete spare part
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', [auth, checkRole(['admin', 'user'])], async (req, res) => {
     try {
         const sparePart = await SparePart.findByPk(req.params.id);
         if (!sparePart) {

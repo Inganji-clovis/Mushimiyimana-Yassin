@@ -20,7 +20,7 @@ function Register() {
     }))
   }
 
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -29,6 +29,13 @@ function Register() {
       return
     }
 
+    // Log the data being sent
+    console.log('Registering with:', {
+      username: formData.username,
+      email: formData.email,
+      password: '***' // Don't log the actual password
+    })
+
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
@@ -36,30 +43,24 @@ function Register() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
+          username: formData.username.trim(),
+          email: formData.email.trim(),
           password: formData.password
         })
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        let errorMessage = errorData.message || 'Registration failed'
-        
-        // Handle validation errors with details array
-        if (errorData.details && Array.isArray(errorData.details)) {
-          errorMessage = errorData.details.join('\n')
-        } else if (typeof errorData.details === 'string') {
-          errorMessage = errorData.details
-        }
-        
-        setError(errorMessage)
+        const data = await response.json()
+        setError(data.error || 'Registration failed')
         return
       }
 
-      navigate('/login')
+      const data = await response.json()
+      localStorage.setItem('token', data.token)
+      navigate('/spare-parts')
     } catch (err) {
-      setError(err.message)
+      setError('Network error: ' + err.message)
+      console.error('Network error:', err)
     }
   }
 

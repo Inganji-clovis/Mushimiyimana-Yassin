@@ -10,8 +10,8 @@ import StockManagement from './components/StockManagement'
 import Reports from './components/Reports'
 
 function PrivateRoute({ children }) {
-  const { isAuthenticated } = useAuth()
-  return isAuthenticated ? children : <Navigate to="/login" />
+  const token = localStorage.getItem('token')
+  return token ? children : <Navigate to="/login" />
 }
 
 function App() {
@@ -23,8 +23,7 @@ function App() {
   const fetchSpareParts = async () => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/spareparts')
-      const data = await response.json()
+      const data = await fetchWithAuth('http://localhost:5000/api/spareparts')
       setSpareParts(data)
     } catch (error) {
       console.error('Error fetching spare parts:', error)

@@ -10,10 +10,18 @@ function SparePartsTable() {
     setLoading(true)
     setError('')
     try {
-      const response = await fetch('http://localhost:5000/api/spareparts')
+      const token = getToken()
+      const response = await fetch('http://localhost:5000/api/spareparts', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch spare parts')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to fetch spare parts')
       }
+      
       const data = await response.json()
       setSpareParts(data)
     } catch (err) {
@@ -31,8 +39,12 @@ function SparePartsTable() {
     if (!window.confirm('Are you sure you want to delete this spare part?')) return
 
     try {
-      const response = await fetch(`http://localhost:5000/api/spareparts/${id}`, {
-        method: 'DELETE'
+      const token = getToken()
+    const response = await fetch(`http://localhost:5000/api/spareparts/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       if (!response.ok) {
         throw new Error('Failed to delete spare part')

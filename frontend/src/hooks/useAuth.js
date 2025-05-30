@@ -37,7 +37,7 @@ export function useAuth() {
 
   const register = async (userData) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,6 +49,9 @@ export function useAuth() {
         throw new Error('Registration failed')
       }
 
+      const data = await response.json()
+      localStorage.setItem('token', data.token)
+      setIsAuthenticated(true)
       return true
     } catch (error) {
       throw error
